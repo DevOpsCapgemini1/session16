@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.10.13.619",
+      "templateHash": "488696981952148060"
+    }
+  },
+  "parameters": {
+    "containerName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "networkAccess": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2022-02-01-preview",
+      "name": "[parameters('containerName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('sku')]"
+      },
+      "properties": {
+        "publicNetworkAccess": "[parameters('networkAccess')]"
+      }
+    }
+  ]
+}
