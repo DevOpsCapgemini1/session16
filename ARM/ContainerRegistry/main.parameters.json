@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "containerName": {
-      "value": "mbidzinskContainer01"
+      "value": "mbidzinskContainer02"
     },
     "location": {
       "value": "uksouth"

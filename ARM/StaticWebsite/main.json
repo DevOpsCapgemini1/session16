@@ -1,0 +1,94 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+
+  "parameters": {
+    "storage_name": {
+      "type": "string"
+    },
+    "storage_sku": {
+      "type": "string"
+    },
+    "unique_id": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
+    },
+    "scripts_repo_path": {
+      "type": "string",
+      "defaultValue": "https://github.com/DevOpsCapgemini1/session16"
+    },
+    "scripts_repo_branch": {
+      "type": "string",
+      "defaultValue": "main"
+    },
+    "identity_name": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "site": {
+      "index": "index.html",
+      "error": "error.html"
+    },
+    "source": {
+      "repo": {
+        "path": "[parameters('scripts_repo_path')]",
+        "branch": "[parameters('scripts_repo_branch')]"
+      }
+    },
+    "assets": {
+      "raw": {
+        "path": "[replace(variables('source').repo.path, 'github.com', 'raw.githubusercontent.com')]"
+      }
+    },
+    "staticWebsite": {
+      "absolutePath": "[format('{0}/{1}/script.sh', variables('assets').raw.path, variables('source').repo.branch)]",
+      "arguments": "[format('--name {0} --index {1} --error {2}', parameters('storage_name'), variables('site').index, variables('site').error)]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-06-01",
+      "name": "[parameters('storage_name')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "[parameters('storage_sku')]"
+      },
+      "kind": "StorageV2"
+    },
+    {
+      "type": "Microsoft.Resources/deploymentScripts",
+      "apiVersion": "2020-10-01",
+      "name": "static-website-deployment-script",
+      "location": "[variables('location')]",
+      "kind": "AzureCLI",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identity_name')))]": {}
+        }
+      },
+      "properties": {
+        "forceUpdateTag": "[parameters('unique_id')]",
+        "azCliVersion": "2.30.0",
+        "arguments": "[variables('staticWebsite').arguments]",
+        "primaryScriptUri": "[variables('staticWebsite').absolutePath]",
+        "supportingScriptUris": [],
+        "timeout": "PT10M",
+        "cleanupPreference": "Always",
+        "retentionInterval": "P1D"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storage_name'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "website_url": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storage_name')), '2021-06-01', 'Full').properties.primaryEndpoints.web]"
+    }
+  }
+}
