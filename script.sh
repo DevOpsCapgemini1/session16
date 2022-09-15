@@ -1,13 +1,13 @@
 #!/bin/bash
 
 
-echo "installing az cli storage extension"
+
 az extension add \
     --name storage-preview \
     --verbose \
     -o table
 
-echo "enabling static websites"
+echo "enable static websites"
 az storage blob service-properties update \
    --account-name "bidzinskistorageacc" \
    --static-website \

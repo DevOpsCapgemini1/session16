@@ -85,7 +85,7 @@
       "identity": {
         "type": "userAssigned",
         "userAssignedIdentities": {
-          "[resourceID(variables('general'), 'Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]": {}
+          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]": {}
         }
       },
       "properties": {
