@@ -9,11 +9,10 @@ az extension add \
 
 echo "enabling static websites"
 az storage blob service-properties update \
-   --account-name $ACCNAME \
+   --account-name "bidzinskistorageacc" \
    --static-website \
    --404-document "error.html" \
    --index-document "index.html" \
    --verbose \
    -o table
 
-echo "↑ =================================== ↑"
