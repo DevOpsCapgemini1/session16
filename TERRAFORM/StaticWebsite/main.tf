@@ -47,26 +47,26 @@ resource "random_id" "random_deployment_suffix" {
   byte_length = 4
 }
 
-# resource "azurerm_deployment_scripts" "symbolicname" {
-#   type      = "Microsoft.Resources/deploymentScripts@2020-10-01"
-#   name      = "${storageaccountname}-website"
-#   location  = var.location
-#   parent_id = data.azurerm_resource_group.example.id
+resource "azapi_resource" "symbolicname" {
+  type      = "Microsoft.Resources/deploymentScripts@2020-10-01"
+  name      = "${storageaccountname}-website"
+  location  = var.location
+  parent_id = data.azurerm_resource_group.example.id
 
-#   identity {
-#     type         = "UserAssigned"
-#     identity_ids = [data.azurerm_user_assigned_identity.id]
-#   }
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [data.azurerm_user_assigned_identity.id]
+  }
 
-#   kind = "AzureCLI"
-#   properties = {
-#     arguments            = "--name ${var.storageaccountname} --index index.html --error error.html"
-#     azCliVersion         = "2.30.0"
-#     cleanupPreference    = "Always"
-#     forceUpdateTag       = "uniquestring${random_id.random_deployment_suffix.hex}"
-#     primaryScriptUri     = "https://raw.githubusercontent.com/DevOpsCapgemini1/session16/main/script.sh"
-#     retentionInterval    = "P1D"
-#     supportingScriptUris = []
-#     timeout              = "PT10M"
-#   }
-# }
+  kind = "AzureCLI"
+  properties = {
+    arguments            = "--name ${var.storageaccountname} --index index.html --error error.html"
+    azCliVersion         = "2.30.0"
+    cleanupPreference    = "Always"
+    forceUpdateTag       = "uniquestring${random_id.random_deployment_suffix.hex}"
+    primaryScriptUri     = "https://raw.githubusercontent.com/DevOpsCapgemini1/session16/main/script.sh"
+    retentionInterval    = "P1D"
+    supportingScriptUris = []
+    timeout              = "PT10M"
+  }
+}
